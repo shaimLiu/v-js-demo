@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>vue 模板语法</title>
+    <link rel="stylesheet" href="base.css">
+  </head>
+  <body>
+    <h1>插值</h1>
+    <div class="explain">
+      <h3>文本</h3>
+      数据绑定最常见的形式就是使用 “Mustache” 语法（双大括号）的文本插值：
+        <div class="code">
+          &lt;span&gt;Message: <span class="red">{{ msg }}</span>&lt;/span&gt;
+        </div>
+      Mustache 标签将会被替代为对应数据对象上 msg 属性的值。无论何时，绑定的数据对象上 msg 属性发生了改变，插值处的内容都会更新。
+      <br><br>
+      通过使用 <span class="highlight">v-once</span>  指令，你也能执行一次性地插值，当数据改变时，插值处的内容不会更新。但请留心这会影响到该节点上所有的数据绑定：
+      <div class="code">
+        &lt;span <span class="red">v-once</span>&gt;This will never change: <span class="red">{{ msg }}</span>&lt;/span&gt;
+      </div>
+      <h3>纯html</h3>
+      双大括号会将数据解释为纯文本，而非 HTML 。为了输出真正的 HTML ，你需要使用 v-html 指令： <br>
+      <div class="code">
+        &lt;div <span class="red">v-html="rawHtml"</span>&gt;&lt;/div&gt;
+      </div>
+      <p class="highlight" id="app-html" v-html="rawHtml">
+      </p>
+      <h3>属性</h3>
+      Mustache 不能在 HTML 属性中使用，应使用 v-bind 指令：dynamicId 可以在js中动态改变，页面会对应输出
+      <div class="code">
+        &lt; div  <span class="red">v-bind:id="dynamicId"</span>&gt; &lt;div&gt;
+      </div>
+      这对布尔值的属性也有效 —— 如果条件被求值为 false 的话该属性会被移除：
+      <div class="code">
+        &lt; button   <span class="red">v-bind:disabled="dynamicDisabled"</span>&gt; &lt;div&gt;
+      </div>
+      <h3>使用javascript表达式</h3>
+      <div class="code">
+        {{ number + 1 }} <br>
+        {{ ok ? 'YES' : 'NO' }} <br>
+        {{ message.split('').reverse().join('') }} <br>
+        &lt;div v-bind:id="'list-' + id"&gt;&lt;/div&lt;<br>
+      </div>
+      这些表达式会在所属 Vue 实例的数据作用域下作为 JavaScript 被解析。有个限制就是，每个绑定都只能包含单个表达式，所以下面的例子都不会生效 <br>
+      <div class="code">
+        <span class="annotation">&lt;!-- 这是语句，不是表达式 --&gt; </span><br>
+        {{ var a = 1}} <br>
+        <span class="annotation">  &lt;!-- 流控制也不会生效，请使用三元表达式 --&gt;</span> <br>
+        {{ if (ok) { return message } }} <br>
+      </div>
+      <div class="highlight">
+        模板表达式都被放在沙盒中，只能访问全局变量的一个白名单，如 Math 和 Date 。你不应该在模板表达式中试图访问用户定义的全局变量。
+      </div>
+      <h3>指令</h3>
+      指令（Directives）是带有 v- 前缀的特殊属性。指令属性的值预期是单一 JavaScript 表达式（除了 v-for，之后再讨论）。指令的职责就是当其表达式的值改变时相应地将某些行为应用到 DOM 上。让我们回顾一下在介绍里的例子：
+      <div class="code">
+        &lt; p <span class="red">v-if="seen"</span>&gt;Now you see me &lt;/p&gt;
+      </div>
+      这里， v-if 指令将根据表达式 seen 的值的真假来移除/插入 <p> 元素。
+        <h3>参数</h3>
+        <h3>修饰符</h3>
+        修饰符（Modifiers）是以半角句号 . 指明的特殊后缀，用于指出一个指令应该以特殊方式绑定。例如，.prevent 修饰符告诉 v-on 指令对于触发的事件调用 event.preventDefault()：
+        <div class="code">
+          &lt;form v-on:submit<span class="red">.prevent</span>=&quot;onSubmit&quot;&gt;&lt;/form&gt;
+        </div>
+        之后当我们更深入地了解 v-on 与 v-model时，会看到更多修饰符的使用。
+        <h3>过滤器</h3>
+        Vue.js 允许你自定义过滤器，可被用作一些常见的文本格式化。过滤器可以用在两个地方：mustache 插值和 v-bind 表达式。过滤器应该被添加在 JavaScript 表达式的尾部，由“管道”符指示：
+
+        <div class="code">
+          &lt;!-- in mustaches --&gt; <br>
+          {{ message | <span class="highlight">capitalize</span> }} <br>
+          &lt;!-- in v-bind --&gt; <br>
+          &lt;div v-bind:id=&quot;rawId | formatId&quot;&gt;&lt;/div&gt;
+        </div>
+
+        <span class="highlight"> Vue 2.x 中，过滤器只能在 mustache 绑定和 v-bind 表达式（从 2.1.0 开始支持）中使用，因为过滤器设计目的就是用于文本转换。为了在其他指令中实现更复杂的数据变换，你应该使用计算属性。</span>
+        <br>
+        过滤器函数总接受表达式的值作为第一个参数。
+        <div class="code">
+          new Vue({ <br>
+          // ... <br>
+          <span class="red">filters:</span> { <br>
+            <span class="highlight">capitalize:</span> function (value) { <br>
+              if (!value) return '' <br>
+              value = value.toString() <br>
+              return value.charAt(0).toUpperCase() + value.slice(1) <br>
+            } <br>
+          } <br>
+        }) <br>
+        </div>
+        过滤器可以串联：
+        <div class="code">
+        {{ message | filterA | filterB }}
+        </div>
+        过滤器是 JavaScript 函数，因此可以接受参数：
+        <div class="code">
+        {{ message | filterA('arg1', arg2) }}
+        </div>
+        这里，字符串 'arg1' 将传给过滤器作为第二个参数， arg2 表达式的值将被求值然后传给过滤器作为第三个参数。<br>
+
+        <div class="explain" id="app-filter">
+          eg:  firstName"hello world~~<br>
+          <span v-pre>{{ firstName | addName('joy','lily') | upperCase }}</span>
+           ==> {{ firstName | addName('joy','lily') | upperCase }}<br>
+           <span v-pre>{{ firstName | upperCase | addName('joy','lily') }}</span>
+            ==> {{ firstName  | upperCase | addName('joy','lily')}}
+        </div>
+
+
+        <h3>缩写</h3>
+        v-bind:==>: &nbsp;&nbsp;&nbsp; v-on:==>@
+        <div class="code">
+          <span class="annotation">&lt;!-- 完整语法 --&gt;  </span><br>
+          &lt;a v-bind:href=&quot;url&quot;&gt;&lt;/a&gt; <br>
+          <span class="annotation">&lt;!-- 缩写 --&gt; </span><br>
+          &lt;a :href=&quot;url&quot;&gt;&lt;/a&gt; <br><br>
+          <span class="annotation">&lt;!-- 完整语法 --&gt; </span><br>
+          &lt;a v-on:click=&quot;doSomething&quot;&gt;&lt;/a&gt; <br>
+          <span class="annotation">&lt;!-- 缩写 --&gt; </span><br>
+          &lt;a @click=&quot;doSomething&quot;&gt;&lt;/a&gt;
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+      var app2 = new Vue({
+        el:"#app-html",
+        data:{
+          rawHtml:"  被插入的内容都会被当做 HTML —— 数据绑定会被忽略。<br> <span class='red'> 注意: </span>你不能使用 v-html 来复合局部模板，因为 Vue 不是基于字符串的模板引擎。组件更适合担任 UI 重用与复合的基本单元。"
+        }
+      });
+      var app1 = new Vue({
+        el:'#app-filter',
+        data:{firstName:'hello world~~'},
+        filters:{
+          addName:function(value,arg2,arg3){
+            return value + (arg2?arg2:'') + (arg3?arg3:'');
+          },
+          upperCase:function(value){
+            return value.toUpperCase();
+          }
+        }
+      })
+    </script>
+  </body>
+</html>

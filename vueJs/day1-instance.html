@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>VUE实例</title>
+    <link rel="stylesheet" href="base.css">
+  </head>
+  <body>
+    <h2>构造器</h2>
+    <p class='highlight'>
+      每个Vue.js应用都是通过构造函数Vue创建一个Vue的根实例启动的 <br>
+      在实例化Vue时,需要传入一个 选项对象
+      <ol>
+        <li><a href="api/data.html">数据</a></li>
+        <li><a href="api/"></a>模板</li>
+        <li>挂载元素</li>
+        <li>方法</li>
+        <li>生命周期钩子</li>
+        <li>等...</li>
+      </ol>
+    </p>
+    <h2>属性与方法</h2>
+    每个vue实例都会代理其data对象里面所有的属性 <br>
+    <p class='code'>
+      var data = {a:1};<br>
+      var vm = new Vue({<br>
+        data:data<br>
+      });<br>
+      vm.a === data.a; // ->true <br>
+      // 设置属性也会影响到原始数据 <br>
+      vm.a = a; <br>
+      data.a //->2 <br>
+      // ... 反之亦然<br>
+      data.a = 4; <br>
+      vm.a // ->4 <br>
+    </p>
+    <button type="button" onclick="but1()">but1:设置 vm.a=3</button>
+    <button type="button" onclick="but2()">but2:设置 data.a=4</button>
+    <div class="red">
+      注意 :只有这些被代理的属性是响应式的，如果在实例创建之后添加到属性实例上的，不会触发视图更新
+      <button type="button" name="button" onclick="but3()">
+      but3:设置data.b=5</button>
+    </div>
+    <p class="explain">
+      vue实例暴露了一些有用的实例属性与方法。这些属性与方法都有前缀$,以便跟代理的data属性区分
+      var data = { a: 1 } <br>
+      var vm = new Vue({<br>
+        el: '#example',<br>
+        data: data<br>
+      })<br>
+      vm.$data === data // -> true<br>
+      vm.$el === document.getElementById('example') // -> true<br>
+      // $watch 是一个实例方法<br>
+      vm.$watch('a', function (newVal, oldVal) {<br>
+        // 这个回调将在 `vm.a`  改变后调用<br>
+      })<br>
+      <div class="highlight">
+        <span class="red">注意：</span>不要在实例属性或者回调函数中（如 vm.$watch('a', newVal => this.myMethod())）使用箭头函数。因为箭头函数绑定父上下文，所以 this 不会像预想的一样是 Vue 实例，而是 this.myMethod 未被定义。
+      </div>
+    </p>
+
+    <p class="explain">
+      每个 Vue 实例在被创建之前都要经过一系列的初始化过程。例如，实例需要配置数据观测(data observer)、编译模版、挂载实例到 DOM ，然后在数据变化时更新 DOM 。在这个过程中，实例也会调用一些 生命周期钩子 ，这就给我们提供了执行自定义逻辑的机会。<br>
+      var vm = new Vue({ <br>
+        data: { <br>
+          a: 1 <br>
+        }, <br>
+        <span class="red">created</span>: function () { <br>
+          // `this` 指向 vm 实例 <br>
+          console.log('a is: ' + this.a) <br>
+        } <br>
+      }) <br>
+      // -> "a is: 1" <br>
+    </p>
+    <img src="http://cn.vuejs.org/images/lifecycle.png" width="1028px" alt="证明周期">
+
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+        var data = {a:1};
+        var vm1 = new Vue({
+          data:data
+        });
+        vm1.a === data.a; // ->true <br>
+        // 设置属性也会影响到原始数据 <br>
+        function but1(){
+          vm1.a = 3;
+          alert(data.a); //->3 <br>
+        }
+        function but2(){
+          data.a = 4 ;
+          alert(vm1.a); //->4 <br>
+        }
+        function but3(){
+          data.b = '5' ;
+          alert(vm1.b); //->undefined <br>
+        }
+    </script>
+  </body>
+</html>

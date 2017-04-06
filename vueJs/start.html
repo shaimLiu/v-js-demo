@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>vueJs起步</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="base.css">
+</head>
+<body>
+<h2>声明式渲染 </h2>
+<div id="app">显示会有点慢<br/>{{message}}</div>
+
+<div id="app-2">
+	<span v-bind:title="message">
+		鼠标悬停几秒查看此处动态绑定的提示信息！
+	</span>
+</div>
+<p class="explain">
+	<span class="highlight">v-bind</span>属性被称为<span class="stronge">指令</span>。指令带有前缀<span class="highlight">v-</span>以表示他们是vue提供的特殊属性。<br/>
+	v-bind:title="message"表示这里该指令的作用是：“将这个元素节点的 <span class="highlight">title </span>属性和 Vue 实例的 <span class="highlight">message </span>属性保持一致”。<br/>
+	再次打开浏览器的 JavaScript 控制台输入 <span class="highlight">app2.message = '新消息'</span>，就会再一次看到这个绑定了 title 属性的 HTML 已经进行了更新。
+</p>
+
+
+<h2>条件与循环</h2>
+<div id="app-3">
+	<p v-if="seen">现在你看到我了</p>
+	<button id="but-3" onclick="setIf()">点我下可切换看不看</button>
+</div>
+
+<div id="app-4">
+	<ol>
+		<li v-for="todo in todos">
+			{{todo.text}}
+		</li>
+	</ol>
+	<button onclick="addTodo()">点下我加一项</button>
+	<button onclick="minusTodo()">点下我减一项</button>
+</div>
+
+<h2>处理用户输入</h2>
+<p class="explain">
+	为了让用户和你的应用进行交互，我们可以使用 <span class="highlight">v-on</span>指令绑定一个调用vue实例方法的事件监听器
+</p>
+<div id="app-5">
+	<p>{{message}}</p>
+	<button v-on:click="reverseMessage">逆转消息</button>
+</div>
+<p class="explain">
+	vue还提供了 <span class="highlight">v-model</span>指令，使表单输入和应用状态间的双向绑定变得轻而易举。
+</p>
+<div id="app-6">
+	<p>{{message}}</p>
+	<input v-model="message">
+</div>
+
+<h2>组件化应用构建</h2>
+<p class="explain">
+	组件系统是 Vue 的另一个重要概念，因为它是一种抽象，允许我们使用小型、自包含和通常可复用的组件构建大型应用。仔细想想，几乎任意类型的应用界面都可以抽象为一个组件树：<br>
+
+在 Vue 里，一个组件本质上是一个拥有预定义选项的一个 Vue 实例，在 Vue 中注册组件很简单：(页面有点类似于angluar 中的指令)
+</p>
+<ol id="app-8">
+	<!-- 创建一个 todo-item组件的实例 -->
+	<todo-item></todo-item>
+</ol>
+<ol id="app-9">
+	<!-- 现在我们为每个todo-item提供待办项对象    -->
+	<!-- 待办项对象是变量，即其内容可以是动态的 -->
+	<todo-item2 v-for="item in groceryList" v-bind:todo="item"></todo-item2>
+</ol>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script type="text/javascript">
+
+	//声明式渲染
+	var app = new Vue({
+		el:"#app",
+		data:{
+			message:'Hello Vue!'
+		}
+	});
+
+	var app2 = new Vue({
+		el:"#app-2",
+		data:{
+			message:"页面加载于"+new Date()
+		}
+	});
+
+	//条件与循环
+	var app3 = new Vue({
+		el:"#app-3",
+		data:{
+			seen:true
+		}
+	});
+
+	var app4 = new Vue({
+		el:"#app-4",
+		data:{
+			todos:[
+			{text:'学习javascript'},
+			{text:'学习 vue'},
+			{text:'整个牛项目'}
+			]
+		}
+	})
+	function setIf(){
+		if(app3.seen){
+			app3.seen = false;
+		}else{
+			app3.seen = true;
+		}
+	}
+	function addTodo(){
+		app4.todos.push({text:'新加项'});
+	}
+		function minusTodo(){
+		app4.todos.splice(app4.todos.length-1,1);
+	}
+	// 处理用户输入
+	var app5 = new Vue({
+		el:"#app-5",
+		data:{
+			message:'hello vue.js'
+		},
+		methods:{
+			reverseMessage:function(){
+				this.message = this.message.split(' ').reverse().join(' ');
+			}
+		}
+	});
+	var app6 = new Vue({
+		el:"#app-6",
+		data:{
+			message:'hello vue'
+		}
+	});
+
+	// 组件化应用构建
+	//1.定义名为 todo-item 的新组件
+	Vue.component('todo-item',{
+		template:'<li>这是个待办项</li>'
+	});
+	//2.创建根实例
+	new Vue({
+		el:"#app-8"
+	})
+
+	Vue.component('todo-item2',{
+		// todo-item 组件现在接受一个
+		// "prop"，类似于一个自定义属性
+		// 这个属性名为 todo。
+		props:['todo'],
+		template:'<li>{{todo.text}}</li>'
+	});
+	new Vue({
+		el:"#app-9",
+		data:{
+			groceryList:[
+			{text:'待办1'},
+			{text:'待办2'},
+			{text:'待办3'}
+			]
+		}
+	})
+</script>
+</body>
+</html>
