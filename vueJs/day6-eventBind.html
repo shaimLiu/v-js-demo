@@ -1,0 +1,70 @@
+<html>
+  <head>
+    <title>事件处理器</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="base.css">
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  </head>
+
+  <body>
+    <h3>监听事件</h3>
+    <p>可以使用 <span class="highlight">v-on</span>（v-on：的简写@）指令监听dom事件来触发一些javascript代码</p>
+    <div id="example-1">
+      <button @click="counter += 1">增加1</button>
+      <p>这个按钮被点击了{{ counter }}次</p>
+    </div>
+
+    <h3>方法事件处理器</h3>
+
+    <div id="example-2">
+      <button @click="greet">Greet</button>
+    </div>
+
+    <h3>内联处理器方法</h3>
+    <div id="example-3">
+      <button v-on:click="say('hi')"> say hi</button>
+      <button v-on:click="say('what')">say what</button>
+
+      <p>有时也需要在内联语句处理器中访问原生 DOM 事件。可以用特殊变量 $event 把它传入方法：</p>
+      <button v-on:click="warn('Form cannot be submitted yet',$event)">submit</button>
+    </div>
+
+
+    <h3>事件修饰符</h3>
+
+    <script>
+      var example1 = new Vue({
+        el:'#example-1',
+        data:{
+          counter:0
+        }
+      });
+
+      var example2 = new Vue({
+        el:'#example-2',
+        data:{
+          name:'shaim'
+        },
+        methods:{
+          greet:function(event){
+            alert('my name ' +this.name);
+            // `event` 是原生 DOM 事件
+            alert(event.target.tagName);
+          }
+        }
+      });
+
+      var example3 = new Vue({
+        el:'#example-3',
+        methods:{
+          say:function(something){
+            alert(something);
+          },
+          warn:function(message,event){
+            alert('this is '+event.target.tagName+'  message: '+message);
+          }
+        }
+      })
+    </script>
+  </body>
+</html>
