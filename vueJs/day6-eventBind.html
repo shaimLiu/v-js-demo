@@ -31,8 +31,149 @@
 
 
     <h3>事件修饰符</h3>
+    <ul>
+    <li><span class="highlight">.stop </span>event.stopPropagation()</li>
+    <li><span class="highlight">.prevent </span>event.preventDefault()</li>
+    <li><span class="highlight">.capture </span></li>
+    <li><span class="highlight">.self </span></li>
+    <li><span class="highlight">.once </span></li>
+    </ul>
+
+    <div id="example-4">
+    <span class="highlight">.stop </span>v-on:eventName.stop eg:v-on:click.stop
+    <div class="border1 width300 hight200">
+        <div v-on:click="stopParent" class="border1 width200 hight100 backgroundRed">
+          点我<a v-on:click="stopDo" class="backgroundWheat">不阻止事件冒泡(点我)</a>
+        </div>
+    </div>
+    <div class="border1 width300 hight200">
+      <div v-on:click="stopParent" class="border1 width200 hight100 backgroundRed">
+        点我<a v-on:click.stop="stopDo" class="backgroundWheat">阻止事件冒泡(点我)</a>
+      </div>
+    </div>
+    <br>
+    <span class="highlight">.prevent </span>v-on:eventName.prevent eg:v-on:click.prevent
+    <div class="border1 width300 hight200">
+          <a v-on:click="doSomething"  target="_blank" href="http://baidu.com" class="backgroundWheat">不阻止默认事件(点我)</a>
+    </div>
+    <div class="border1 width300 hight200">
+        <a v-on:click.prevent="doSomething"  target="_blank" href="http://baidu.com" class="backgroundWheat">阻止默认事件(点我)</a>
+    </div>
+    <br>
+    修饰符可以串联   <span class="highlight">v-on:click.stop.prevent</span>
+    <div class="border1 width300 hight200">
+      <div v-on:click="stopParent" class="border1 width200 hight100 backgroundRed">
+        点我<a v-on:click="doSomething"  target="_blank" href="http://baidu.com" class="backgroundWheat">不阻止冒泡与默认</a>
+      </div>
+    </div>
+    <div class="border1 width300 hight200">
+      <div v-on:click="stopParent" class="border1 width200 hight100 backgroundRed">
+        点我<a v-on:click.stop.prevent="doSomething"  target="_blank" href="http://baidu.com" class="backgroundWheat">阻止冒泡与默认</a>
+      </div>
+    </div>
+    <br>
+    <span class="highlight">.capture </span>v-on:eventName.capture eg:v-on:click.capture
+    <div class="border1 width300 hight200">
+      <div v-on:click="captureParent" class="border1 width300 hight100 backgroundRed">
+        点我<a v-on:click="captureChild" class="backgroundWheat">不使用事件捕获模式</a>
+      </div>
+    </div>
+    <div class="border1 width300 hight200">
+      <div v-on:click.capture="captureParent" class="border1 width300 hight100 backgroundRed">
+        点我<a v-on:click="captureChild" class="backgroundWheat">添加事件侦听器时使用事件捕获模式</a>
+      </div>
+    </div>
+    <br>
+
+    <span class="highlight">.self </span>只当事件在该元素本身（而不是子元素）触发时触发回调
+    <div class="border1 width300 hight200 backgroundRed"  v-on:click="captureParent" >
+        点我<a v-on:click="captureChild" class="backgroundWheat">(点我)</a>
+    </div>
+    <div class="border1 width300 hight200 backgroundRed" v-on:click.self="captureParent" >
+        只当事件在该元素本身<a v-on:click="captureChild" class="backgroundWheat">(点我)</a>
+    </div>
+    <br>
+    <span class="highlight">.once </span>2.1.4新增
+    <div class="border1 width300 hight200 backgroundRed"  >
+        <a v-on:click="captureChild" class="backgroundWheat">(点我)</a>
+    </div>
+    <div class="border1 width300 hight200 backgroundRed" >
+        <a v-on:click.once="captureChild" class="backgroundWheat">只能点一次(点我)</a>
+    </div>
+    不像其它只能对原生的 DOM 事件起作用的修饰符，.once 修饰符还能被用到自定义的组件事件上
+    </div>
+
+
+
+    <h3>按键修饰符</h3>
+    v-on:keyup.13 <br>
+    简写： @keyup.13 <br>
+    记住所有的 keyCode 比较困难，所以 Vue 为最常用的按键提供了别名：<span class="highlight">v-on:keyup.enter="submit"</span> <br>
+    <ul>
+      <li><span class="highlight">.enter</span></li>
+      <li><span class="highlight">.tab</span></li>
+      <li><span class="highlight">.delete (捕获 “删除” 和 “退格” 键)</span></li>
+      <li><span class="highlight">.esc</span></li>
+      <li><span class="highlight">.space</span></li>
+      <li><span class="highlight">.up</span></li>
+      <li><span class="highlight">.down</span></li>
+      <li><span class="highlight">.left</span></li>
+      <li><span class="highlight">.right</span></li>
+    </ul>
+    可以通过全局 <span class="highlight">config.keyCodes</span> 对象自定义按键修饰符别名：<br>
+    Vue.config.keyCodes.f1 = 112; // 可以使用 v-on:keyup.f1 <br>
+    <div id="example-5">
+      <input type="text" v-on:keyup.enter="key_enter" v-on:keyup.tab="key_tab" v-on:keyup.delete="key_delete">
+    </div>
+    <h3>按键修饰符  2.1.0新增</h3>
+    <ul>
+      <li><span class='highlight'>.ctrl </span></li>
+      <li><span class='highlight'>.alt </span></li>
+      <li><span class='highlight'>.shift </span></li>
+      <li><span class='highlight'>.meta </span></li>
+    </ul>
+    <div class="code">
+      &lt;!-- Alt + C --&gt; <br>
+      &lt;input @keyup.alt.67="clear"&gt; <br>
+      &lt;!-- Ctrl + Click --&gt; <br>
+      &lt;div @click.ctrl="doSomething"&gt;Do something&lt;/div&gt; <br>
+    </div>
 
     <script>
+      var example5 = new Vue({
+        el:'#example-5',
+        methods:{
+          key_enter:function(){
+            alert('点了回车');
+          },
+          key_tab:function(){
+            alert('点了tab');
+          },
+          key_delete:function(){
+            alert('点了删除/退格');
+          }
+        }
+      });
+      var example4 = new Vue({
+        el:'#example-4',
+        methods:{
+          doSomething:function(){
+            alert('做某些事情-之后新页面打开百度');
+          },
+          stopDo:function(){
+            alert('阻止单击事件冒泡');
+          },
+          stopParent:function(){
+            alert('阻止单击事件冒泡---parent被点击了');
+          },
+          captureChild:function(){
+            alert('Child事件');
+          },
+          captureParent:function(){
+            alert('parent事件');
+          }
+        }
+      });
       var example1 = new Vue({
         el:'#example-1',
         data:{

@@ -27,3 +27,27 @@ body{
 h3{
   color: green;
 }
+.backgroundRed{
+  background: red;
+}
+.backgroundWheat{
+  background: wheat;  
+}
+.border1{
+  border: 1px solid black;
+}
+.width300{
+  width: 300px;
+}
+.width200{
+  width: 200px;
+}
+.width100{
+  width: 100px;
+}
+.hight200{
+  hight:200px;
+}
+.hight100{
+  hight:100px;
+}
